@@ -43,6 +43,14 @@ APK. Download it from the run's *Artifacts* section as `wardogs-idf-debug`, then
 install it with `adb install` or by opening the file on the phone with install
 from unknown sources enabled for your file manager.
 
+Each runner generates its own debug keystore, so consecutive CI builds are
+signed with different keys and an upgrade install is refused with
+`INSTALL_FAILED_UPDATE_INCOMPATIBLE`. Uninstall first; the app keeps no data, so
+nothing is lost.
+
+A second CI job boots an API 34 emulator, runs the Compose UI tests against it
+and uploads a screenshot of each state as `wardogs-idf-screenshots`.
+
 **Locally.** Requires JDK 17 and the Android SDK with platform 35.
 
 ```bash
