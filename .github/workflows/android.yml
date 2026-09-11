@@ -79,7 +79,8 @@ jobs:
             -camera-back none -camera-front none
           script: |
             adb shell wm size
-            gradle connectedDebugAndroidTest
+            gradle connectedDebugAndroidTest \
+              -Pandroid.injected.androidTest.leaveApksInstalledAfterRun=true
             mkdir -p screenshots
             adb shell run-as dev.hapnes.wardogsidf ls files/screenshots \
               | tr -d '\r' > /tmp/shots.txt

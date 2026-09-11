@@ -21,9 +21,10 @@ import java.io.FileOutputStream
 
 /**
  * Drives the real app on a device or emulator and writes a screenshot of each
- * state to the app's internal files directory. CI collects them with `run-as`,
- * which works on a debuggable build; scoped storage blocks adb from reading
- * `Android/data` on API 30 and above, so the external directory is no use here.
+ * state to the app's internal files directory. CI reads them back with `run-as`,
+ * which works on any debuggable build, and must ask Gradle to leave the APKs
+ * installed — `connectedAndroidTest` uninstalls them, and the app's data with
+ * them, as soon as the run finishes.
  */
 @RunWith(AndroidJUnit4::class)
 class IdfCalculatorUiTest {
