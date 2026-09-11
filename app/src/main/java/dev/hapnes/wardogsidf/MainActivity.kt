@@ -42,6 +42,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -268,7 +269,9 @@ private fun CoordinateRow(
             label = "X",
             contentDescription = "$labelPrefix X coordinate",
             imeAction = ImeAction.Next,
-            modifier = Modifier.weight(1f),
+            modifier = Modifier
+                .weight(1f)
+                .testTag("${labelPrefix.lowercase(Locale.US)}-x"),
         )
         CoordinateField(
             value = y,
@@ -276,7 +279,9 @@ private fun CoordinateRow(
             label = "Y",
             contentDescription = "$labelPrefix Y coordinate",
             imeAction = if (lastFieldIsDone) ImeAction.Done else ImeAction.Next,
-            modifier = Modifier.weight(1f),
+            modifier = Modifier
+                .weight(1f)
+                .testTag("${labelPrefix.lowercase(Locale.US)}-y"),
         )
     }
 }
@@ -357,6 +362,7 @@ private fun SolutionPanel(weapon: Weapon, solution: FiringSolution?) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .testTag("solution")
             .border(1.dp, Console.Edge, RoundedCornerShape(6.dp))
             .background(Console.PanelDeep, RoundedCornerShape(6.dp))
             .padding(14.dp),
