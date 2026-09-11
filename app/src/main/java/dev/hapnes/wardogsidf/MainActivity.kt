@@ -175,10 +175,10 @@ private fun ConsoleCard(
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Kicker("FIRE DIRECTION CENTER // 100 M GRID")
+            Kicker("FIRE DIRECTION CENTER // 100 M GRID", modifier = Modifier.weight(1f))
             Text(
                 text = "LIVE",
                 color = Console.Amber,
@@ -368,16 +368,14 @@ private fun SolutionPanel(weapon: Weapon, solution: FiringSolution?) {
             .padding(14.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
+        // Stacked rather than a two-column row: "WAITING FOR COORDINATES" is
+        // wider than half a phone screen and wrapped into the label beside it.
+        Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
             Kicker("${weapon.shortName} FIRING SOLUTION")
             Text(
                 text = status,
                 color = statusColor,
-                fontSize = 11.sp,
+                fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 1.sp,
             )
@@ -554,9 +552,10 @@ private fun Disclaimer() {
 }
 
 @Composable
-private fun Kicker(text: String) {
+private fun Kicker(text: String, modifier: Modifier = Modifier) {
     Text(
         text = text,
+        modifier = modifier,
         color = Console.Dim,
         fontSize = 10.sp,
         fontWeight = FontWeight.Bold,
