@@ -80,8 +80,16 @@ jobs:
           script: |
             adb shell wm size
             gradle connectedDebugAndroidTest
-            adb shell ls -l /sdcard/Android/data/dev.hapnes.wardogsidf/files/screenshots
-            adb pull /sdcard/Android/data/dev.hapnes.wardogsidf/files/screenshots ./
+            mkdir -p screenshots
+            adb shell run-as dev.hapnes.wardogsidf ls files/screenshots \
+              | tr -d '\r' > /tmp/shots.txt
+            cat /tmp/shots.txt
+            while read -r shot; do
+              [ -n "$shot" ] || continue
+              adb exec-out run-as dev.hapnes.wardogsidf cat "files/screenshots/$shot" \
+                > "screenshots/$shot"
+            done < /tmp/shots.txt
+            ls -l screenshots
 
       - name: Upload screenshots
         if: always()

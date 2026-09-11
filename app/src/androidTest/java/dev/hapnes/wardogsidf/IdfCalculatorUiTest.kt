@@ -21,7 +21,9 @@ import java.io.FileOutputStream
 
 /**
  * Drives the real app on a device or emulator and writes a screenshot of each
- * state to the app's external files directory, where CI collects them.
+ * state to the app's internal files directory. CI collects them with `run-as`,
+ * which works on a debuggable build; scoped storage blocks adb from reading
+ * `Android/data` on API 30 and above, so the external directory is no use here.
  */
 @RunWith(AndroidJUnit4::class)
 class IdfCalculatorUiTest {
@@ -90,7 +92,7 @@ class IdfCalculatorUiTest {
     private fun capture(name: String) {
         val bitmap = rule.onRoot().captureToImage().asAndroidBitmap()
         val context = InstrumentationRegistry.getInstrumentation().targetContext
-        val directory = File(context.getExternalFilesDir(null), "screenshots").apply { mkdirs() }
+        val directory = File(context.filesDir, "screenshots").apply { mkdirs() }
         FileOutputStream(File(directory, "$name.png")).use { out ->
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
         }
