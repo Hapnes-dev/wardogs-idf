@@ -72,7 +72,7 @@ class IdfCalculatorUiTest {
 
         rule.onNodeWithTag("solution").performScrollTo()
         rule.onNodeWithText("READY").assertExists()
-        rule.onNodeWithText("1,000").assertExists()
+        rule.onNodeWithText("1000").assertExists()
         rule.onNodeWithText("000").assertExists()
         rule.onNodeWithText("N").assertExists()
         rule.onNodeWithText("SPH-2").assertExists()

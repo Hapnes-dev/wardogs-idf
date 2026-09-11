@@ -424,7 +424,9 @@ private fun SolutionPanel(weapon: Weapon, solution: FiringSolution?) {
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             ResultCard(
                 label = "RANGE",
-                value = solution.rangeMeters.metersLabel(),
+                // Plain digits, no thousands separator: the web tool groups
+                // only the effective-range captions, not the solution itself.
+                value = jsRoundToInt(solution.rangeMeters).toString(),
                 unit = "M",
                 modifier = Modifier.weight(1f),
             )
