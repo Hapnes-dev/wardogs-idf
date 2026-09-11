@@ -77,19 +77,14 @@ jobs:
           emulator-options: >-
             -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
             -camera-back none -camera-front none
+          # Every line here is run as its own command, so no line continuations.
           script: |
             adb shell wm size
-            gradle connectedDebugAndroidTest \
-              -Pandroid.injected.androidTest.leaveApksInstalledAfterRun=true
+            gradle connectedDebugAndroidTest -Pandroid.injected.androidTest.leaveApksInstalledAfterRun=true
             mkdir -p screenshots
-            adb shell run-as dev.hapnes.wardogsidf ls files/screenshots \
-              | tr -d '\r' > /tmp/shots.txt
-            cat /tmp/shots.txt
-            while read -r shot; do
-              [ -n "$shot" ] || continue
-              adb exec-out run-as dev.hapnes.wardogsidf cat "files/screenshots/$shot" \
-                > "screenshots/$shot"
-            done < /tmp/shots.txt
+            adb shell run-as dev.hapnes.wardogsidf ls files/screenshots | tr -d '\r' > shots.txt
+            cat shots.txt
+            while read -r shot; do [ -n "$shot" ] || continue; adb exec-out run-as dev.hapnes.wardogsidf cat "files/screenshots/$shot" > "screenshots/$shot"; done < shots.txt
             ls -l screenshots
 
       - name: Upload screenshots
