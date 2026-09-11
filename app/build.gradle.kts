@@ -4,6 +4,18 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
+// Play requires a strictly increasing versionCode per upload. CI passes the
+// workflow run number; a local build falls back to the gradle.properties value.
+val appVersionCode = (findProperty("appVersionCode") as String?)?.toInt() ?: 1
+val appVersionName = (findProperty("appVersionName") as String?) ?: "1.0.0"
+
+// The upload keystore never lives in this repository. CI writes it to a temp
+// file from a secret and points KEYSTORE_FILE at it; without that, a release
+// build is signed with the debug key so it can still be installed and tested.
+// Play rejects debug-signed uploads, so this cannot leak into a real release.
+val uploadKeystore: String? = System.getenv("KEYSTORE_FILE")
+val hasUploadKey = !uploadKeystore.isNullOrBlank() && file(uploadKeystore).exists()
+
 android {
     namespace = "dev.hapnes.wardogsidf"
     compileSdk = 35
@@ -12,18 +24,36 @@ android {
         applicationId = "dev.hapnes.wardogsidf"
         minSdk = 24
         targetSdk = 35
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = appVersionCode
+        versionName = appVersionName
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    signingConfigs {
+        if (hasUploadKey) {
+            create("upload") {
+                storeFile = file(uploadKeystore!!)
+                storePassword = System.getenv("KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("KEY_ALIAS")
+                keyPassword = System.getenv("KEY_PASSWORD")
+            }
+        }
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
+            signingConfig = if (hasUploadKey) {
+                signingConfigs.getByName("upload")
+            } else {
+                logger.lifecycle("No KEYSTORE_FILE: signing release with the debug key, not uploadable to Play.")
+                signingConfigs.getByName("debug")
+            }
         }
     }
 
